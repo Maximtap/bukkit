@@ -1,0 +1,76 @@
+package com.Tigerwurm.Endergames;
+
+import java.util.HashMap;
+
+import org.bukkit.Location;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
+
+public class Kitmanager extends JavaPlugin implements Listener {
+	
+	public static HashMap<String, String> Spielerkits = new HashMap<>();
+	public static String[] Kits = {"Enterhacken"};
+	
+	public Kitmanager() {
+	}
+	
+	@Override
+	public void onEnable() {
+		super.onEnable();
+		getServer().getPluginManager().registerEvents(this, this);
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		
+		if(command.getName().equalsIgnoreCase("kit")) {
+			if(sender instanceof Player){
+				Player player = (Player) sender;
+				if(args.length > 0) {
+					String kit = args[0];
+					if(contains(kit)) {
+						Spielerkits.put(player.getDisplayName(), kit);
+						player.sendMessage("Dein Kit ist nun " + kit + ".");
+						return true;
+					}
+				}
+				player.sendMessage("Dieser Command setzt dein Kit. So benutzt man ihn:");
+			}
+		}
+		return false;
+	}
+	
+	
+	//Event für Enterhacken
+	@EventHandler
+	public void onfishing(PlayerFishEvent event) {
+		Player p = event.getPlayer();
+		if(Spielerkits.containsKey(p.getDisplayName()) && event.getState() == PlayerFishEvent.State.IN_GROUND) {
+			if(Spielerkits.get(p.getDisplayName()).equalsIgnoreCase("Enterhacken")) {
+				Location loc = event.getHook().getLocation();
+				Location ploc = p.getLocation();
+				double y = loc.getY() - ploc.getY();
+				if(y > 1.4)  y = 1.4;
+				else if(y <= 0.7 && y >= -0.2) y = 0.7;
+				Vector bewegung = new Vector(loc.getX() - ploc.getX(), y, loc.getZ() - ploc.getZ());
+				p.setVelocity(bewegung);
+				p.playSound(ploc, Sound.ENTITY_FIREWORK_LAUNCH, 1, 1);
+			}
+		}
+	}
+	
+	public boolean contains(String kit) {
+		for(String k : Kits) {
+			if(k.equalsIgnoreCase(kit)) {
+				return true;
+			}
+		}
+		return false;
+	}
+}

@@ -1,0 +1,9 @@
+main: com.Tigerwurm.AdventureMap.Manager
+name: AdventureMap
+author: Tigerwurm
+version: 1.0.0
+description: "Eine Plugin-AdventureMap."
+commands:
+  troll:
+    usage: "So benutzt du diesen Command :\n/<command> <TrollType> <Player>"
+    description: Trollt einen Player

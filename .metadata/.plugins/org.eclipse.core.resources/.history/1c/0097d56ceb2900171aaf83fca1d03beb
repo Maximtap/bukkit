@@ -1,0 +1,117 @@
+package pferd;
+
+
+
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.PlayerLeashEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+
+public class Pferd extends JavaPlugin implements Listener {
+	
+	public static List<Haustier> Haustiere = new ArrayList<>();
+	
+	@Override
+	public void onEnable() {
+		super.onEnable();
+		Halsband halsband = new Halsband();
+		halsband.addRecipe();
+		getServer().getPluginManager().registerEvents(this, this);
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerHalsband(PlayerInteractEntityEvent event) {
+		Player player = event.getPlayer();
+		player.sendMessage("Test " + player.getDisplayName());
+		ItemStack tack =  new ItemStack(Material.LEASH);
+		tack.getItemMeta().setDisplayName("Halsband");
+		if(player.getItemInHand().getItemMeta().getDisplayName().equals("Halsband")) {
+			player.sendMessage("Test " + player.getDisplayName());
+			event.setCancelled(true);
+			player.setItemInHand(null);
+			LivingEntity enti = (LivingEntity) event.getRightClicked();
+			Haustier Tier = new Haustier(enti, player, this);
+			Bukkit.getScheduler().scheduleSyncRepeatingTask(this, Tier, 0, 10);
+			Haustiere.add(Tier);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerHalsband(EntityTargetEvent event) {
+		for(Haustier Tier : Haustiere) {
+			Tier.onTarget(event);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onEntityAttack(EntityDamageByEntityEvent event) {
+		for(Haustier Tier : Haustiere) {
+			Tier.onAttack(event);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void ondeath(EntityDeathEvent event) {
+		for(Haustier Tier : Haustiere) {
+			Tier.onDeath(event);
+		}
+	}
+	
+	public void removeHaustier(Haustier tier) {
+		if(tier == null) {
+			System.out.println("Das Tier ist null.");
+		}
+		if(Haustiere.contains(tier)) {
+			System.out.println("Das Tier wurde gefunden,");
+			try {
+				Haustiere.remove(tier);
+				System.out.println("Remove hat funktionukkelt.");
+			} catch(Exception e) {
+				System.out.println("Remove gibt error aus.");
+			}
+		}
+//		tier.cancel();
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		Player player = null;
+		
+		if(sender instanceof Player) {
+			player = (Player) sender;
+			if(command.getName().equalsIgnoreCase("pferd") && player.isOp()) {
+				Horse SuperPferd = (Horse) player.getWorld().spawnEntity(player.getLocation(), EntityType.HORSE);
+				SuperPferd.setAdult();
+				SuperPferd.setJumpStrength(1000);
+				SuperPferd.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 5, false, false));
+				SuperPferd.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, Integer.MAX_VALUE, 2, false, false));
+				SuperPferd.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, Integer.MAX_VALUE, 1, false, false));
+				SuperPferd.setTamed(true);
+				SuperPferd.setPassenger(player);
+				return true;
+			}
+		}
+		return false;
+	}
+
+}

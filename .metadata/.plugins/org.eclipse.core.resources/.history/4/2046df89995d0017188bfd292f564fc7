@@ -1,0 +1,14 @@
+package com.Tigerwurm.Rpg;
+
+import java.util.ArrayList;
+
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.event.Listener;
+
+public class DialogManager implements Listener {
+	ArrayList<LivingEntity> sprecher;
+	
+	public Dialog
+	
+	
+}

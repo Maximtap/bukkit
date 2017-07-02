@@ -1,0 +1,33 @@
+package com.Tigerwurm.Rpg;
+
+import java.util.HashMap;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+
+public class DialogManager implements Listener {
+	
+	HashMap<Entity, String[]> sprecher;
+	HashMap<Entity, HashMap<Player, Integer>> dialogweite;
+	
+	public DialogManager() {
+		sprecher = new HashMap<>();
+		dialogweite = new HashMap<>();
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onRightClick(PlayerInteractEntityEvent e) {
+		if(sprecher.containsKey(e.getRightClicked())) {
+			Entity redet = e.getRightClicked();
+			Player p = e.getPlayer();
+			HashMap<Player, Integer> playerweite = dialogweite.get(redet);
+			int weite = playerweite.get(p);
+			p.sendMessage(redet.getCustomName() + sprecher.get(redet)[weite]);
+			playerweite.put(p, (weite + 1));
+		}
+	}
+}

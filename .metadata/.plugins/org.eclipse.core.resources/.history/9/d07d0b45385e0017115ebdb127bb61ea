@@ -1,0 +1,70 @@
+package com.Tigerwurm.Rpg;
+
+import java.util.HashMap;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+
+public class DialogManager implements Listener {
+	
+	static HashMap<Entity, String[]> sprecher;
+	static HashMap<Entity, HashMap<Player, Integer>> dialogweite;
+	static HashMap<Entity, String> standardphrasen;
+	static HashMap<Player, Boolean> cooldowns;
+	Manager manager;
+	
+	public DialogManager(Manager m) {
+		sprecher = new HashMap<>();
+		dialogweite = new HashMap<>();
+		standardphrasen = new HashMap<>();
+		cooldowns = new HashMap<>();
+		this.manager = m;
+		this.manager.getServer().getPluginManager().registerEvents(this, this.manager);
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onRightClick(PlayerInteractEntityEvent e) {
+		if(sprecher.containsKey(e.getRightClicked())) {
+			Entity redet = e.getRightClicked();
+			Player p = e.getPlayer();
+			
+			if(cooldowns.get(p) == null) cooldowns.put(p, false);
+			else if(cooldowns.get(p)) return;
+			else {
+				cooldowns.put(p, true);
+				manager.getServer().getScheduler().scheduleSyncDelayedTask(manager, new Cooldown(p), 12);
+			}
+			
+			HashMap<Player, Integer> playerweite = dialogweite.get(redet);
+			if(playerweite == null) {
+				p.sendMessage("Ein Fehler ist aufgetreten.");
+				return;
+			} 
+			Integer weite = playerweite.get(p);
+			if(weite == null) weite = 0;
+			String[] dialog = sprecher.get(redet);
+			if(weite >= dialog.length) {
+				p.sendMessage("<" + redet.getCustomName() + "> " + standardphrasen.get(redet));
+				return;
+			}
+			p.sendMessage("<" + redet.getCustomName() + "> " + sprecher.get(redet)[weite]);
+			playerweite.put(p, (weite + 1));
+		}
+	}
+	
+	public static void newDialog(Entity redendesTier, String[] Dialog, String standardphrase) {
+		if(redendesTier == null || Dialog == null) return;
+		sprecher.put(redendesTier, Dialog);
+		dialogweite.put(redendesTier, new HashMap<>());
+		if(standardphrase == null) standardphrasen.put(redendesTier, "Ich freue mich dich zu sehen.");
+		else standardphrasen.put(redendesTier, standardphrase);
+	}
+	
+	public static HashMap<Player, Boolean> getCooldowns() {
+		return cooldowns;
+	}
+}

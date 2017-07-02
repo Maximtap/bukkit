@@ -1,0 +1,5 @@
+name: Pets
+version: 2.0.0
+main: com.Tigerwurm.Pets.Pets
+description: "Man kann sich Halsbänder craften und damit Tiere rechtsklicken, diese werden dann zu Haustieren."
+author: Maxim

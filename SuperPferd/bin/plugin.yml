@@ -1,0 +1,9 @@
+name: SuperPferd
+version: 1.0.0
+main: superPferd.SuperPferd
+description: Spawnt ein Superpferd
+author: Maxim
+commands:
+  pferd:
+    usage: /<command>
+    description: Spawnt ein Superpferd

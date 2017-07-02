@@ -1,0 +1,51 @@
+package com.Tigerwurm.Pets;
+
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+
+public class Agressive extends Haustier {
+
+	public Agressive(LivingEntity tier, Player p, Pets superplugin) {
+		super(tier, p, superplugin);
+	}
+	
+	public boolean onAttack(EntityDamageByEntityEvent event) {
+		if(event.getEntity() instanceof LivingEntity) {
+			LivingEntity defender = (LivingEntity) event.getEntity();
+			LivingEntity damager;
+			if(event.getDamager() instanceof Projectile) {
+				Projectile pfeil = (Projectile) event.getDamager();
+				damager = pfeil._INVALID_getShooter();
+			} else if(event.getDamager() instanceof LivingEntity) {
+				damager = (LivingEntity) event.getDamager();
+			} else {
+				return false;
+			}
+			if(defender == p) {
+				if(damager == Tier) {
+					return true;
+				} else {
+				Kreatur.setTarget(damager);
+				}
+			} else if(damager == p) {
+				Kreatur.setTarget(defender);
+			}
+		}
+		
+		public void onTarget(EntityTargetEvent event) {
+			
+			Entity target = event.getTarget();
+			Entity agressor = event.getEntity();
+
+			if(agressor == Tier && target == p) {
+				event.setCancelled(true);
+			}
+		}
+		
+		return false;
+	}
+}

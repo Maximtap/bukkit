@@ -1,0 +1,9 @@
+author: Tigerwurm
+version: 1.0.0
+description: "Ein Roleplay Plugin!"
+main: com.Tigerwurm.Rpg.Manager
+name: Rpg
+commands:
+  hier:
+    usage: "/hier"
+    description: "Testcommand"

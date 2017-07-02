@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename package &apos;chameleon&apos; to &apos;com.Tigerwurm.Varo&apos;&#x0D;&#x0A;- Original project: &apos;Varo&apos;&#x0D;&#x0A;- Original element: &apos;Varo/src/chameleon&apos;&#x0D;&#x0A;- Renamed element: &apos;Varo/src/com.Tigerwurm.Varo&apos;&#x0D;&#x0A;- Update references to refactored element&#x0D;&#x0A;- Update textual occurrences in comments and strings" description="Rename package &apos;chameleon&apos;" flags="589830" hierarchical="false" id="org.eclipse.jdt.ui.rename.package" input="/src&lt;chameleon" name="com.Tigerwurm.Varo" qualified="false" references="true" stamp="1497187349997" textual="false" version="1.0"/>
+</session>

@@ -1,0 +1,9 @@
+name: ErstesPlugin
+version: 1.0.0
+main: ErstesPacket.ErstesPacket
+description: ErstesPlugin
+author: Maxim
+commands:
+  test:
+    usage: /<command>
+    description: Ein Test 

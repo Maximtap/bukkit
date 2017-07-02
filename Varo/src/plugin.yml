@@ -1,0 +1,9 @@
+name: Varo
+version: 1.0.0
+main: com.Tigerwurm.Varo.GameManager
+description: "Ein Varo Plugin"
+author: Maxim
+commands:
+  varo:
+    usage: "So benutzt du diesen Command:\n/<command>"
+    description: "Varo-Commands."

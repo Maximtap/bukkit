@@ -1,0 +1,7 @@
+package com.Tigerwurm.Rpg;
+
+public class Shop {
+	public Shop() {
+		
+	}
+}

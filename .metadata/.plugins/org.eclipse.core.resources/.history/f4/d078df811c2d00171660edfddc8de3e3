@@ -1,0 +1,96 @@
+package com.Tigerwurm.Pets;
+
+
+
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import org.bukkit.Material;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.plugin.java.JavaPlugin;
+
+public class Pets extends JavaPlugin implements Listener {
+	
+	public List<Haustier> Haustiere;
+	public static List<Agressive> brutale;
+	public static List<String> Brutals;
+	
+	@Override
+	public void onEnable() {
+		super.onEnable();
+		Haustiere = new ArrayList<>();
+		Brutals = new ArrayList<>();
+		Brutals.add("Zombie");
+		Halsband halsband = new Halsband();
+		halsband.addRecipe();
+		getServer().getPluginManager().registerEvents(this, this);
+	}
+		
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPlayerHalsband(PlayerInteractEntityEvent event) {
+		
+		if(event.getRightClicked() instanceof LivingEntity) {
+			Player player = event.getPlayer();
+			if(player.getItemInHand() != null) {
+				if(player.getItemInHand().getType() == Material.LEASH && player.getItemInHand().getItemMeta().getDisplayName().equals("Halsband")) {
+					event.setCancelled(true);
+					player.setItemInHand(null);
+					LivingEntity enti = (LivingEntity) event.getRightClicked();
+					if(Brutals.contains(enti.getClass().getSimpleName())) {
+						Agressive Tier = new Agressive(enti, player, this);
+						brutale.add(Tier);
+					} else {
+						Haustier Tier = new Haustier(enti, player, this);
+						Haustiere.add(Tier);
+					}
+				}
+			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onZiel(EntityTargetEvent event) {
+		for(Haustier tier : Haustiere) {
+			tier.onTarget(event);
+		}
+		for(Agressive tier : brutale) {
+			tier.onTarget(event);
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onEntityAttack(EntityDamageByEntityEvent event) {
+		for(int i=0; i<Haustiere.size(); i++) {
+			if(Haustiere.get(i).onAttack(event)) {
+				event.setCancelled(true);
+			}
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void ondeath(EntityDeathEvent event) {
+		for(int i=0; i<Haustiere.size(); i++) {
+			Haustiere.get(i).onDeath(event);
+		}
+	}
+	
+	public void removeHaustier(Haustier tier) {
+		if(Haustiere.contains(tier)) {
+			Haustiere.remove(tier);
+		} else {
+			System.out.println("Error in Plugin " + this.getName() + ": removeHaustier wurde ohne gültigen Parameter aufgerufen.");
+		}
+		if(!Haustiere.contains(tier)) {
+			System.out.println("Remove Erfolgreich");
+		}
+	}
+}
